@@ -1,0 +1,82 @@
+# EC2 Setup Commands
+
+## Listing the Contents of the Target Directory
+```sh
+ls ~/spring-security/section7/eazyschool-end/target/
+```
+- This command lists all files and directories within the specified `target` directory.
+
+## Changing File Permissions for the Key Pair File
+```sh
+chmod 400 ~/MyInstancekeypair.pem
+```
+- This command changes the permissions of the key pair file to be read-only for the owner, ensuring it is secure.
+
+## Securely Copying the JAR File to the EC2 Instance
+```sh
+scp -i ~/MyInstancekeypair.pem ~/spring-security/section7/eazyschool-end/target/eazyschool-end-0.0.1-SNAPSHOT.jar ubuntu@ec2-54-165-173-102.compute-1.amazonaws.com:~
+```
+- This command securely copies the JAR file from your local machine to the home directory (`~`) of the `ubuntu` user on the specified EC2 instance.
+
+## Connecting to the EC2 Instance via SSH
+```sh
+ssh -i ~/MyInstancekeypair.pem ubuntu@ec2-54-165-173-102.compute-1.amazonaws.com
+```
+- This command connects to the EC2 instance using SSH with the specified key pair file.
+
+## Listing the Contents of the Home Directory on the EC2 Instance
+```sh
+ls
+```
+- This command lists all files and directories in the current directory (home directory in this case) on the EC2 instance.
+
+## Running the Spring Boot Application
+```sh
+java -jar eazyschool-end-0.0.1-SNAPSHOT.jar
+```
+- This command runs the Spring Boot application using the specified JAR file.
+
+## Verifying Application Status
+To ensure that your application is running and listening on the specified port, you can SSH into your EC2 instance and check the status:
+
+### SSH into Your EC2 Instance
+```sh
+ssh -i ~/MyInstancekeypair.pem ubuntu@ec2-54-165-173-102.compute-1.amazonaws.com
+```
+
+### Check if the Application is Running
+```sh
+sudo lsof -i -P -n | grep LISTEN
+```
+- This command checks if there are any processes listening on network ports.
+
+## Updating Security Group Settings
+
+### Navigating to the EC2 Dashboard
+1. **Log in to the AWS Management Console:**
+   - Open your web browser and go to the [AWS Management Console](https://aws.amazon.com/console/).
+   - Enter your credentials (username and password) to log in.
+
+2. **Navigate to the EC2 Dashboard:**
+   - Once logged in, type "EC2" in the search bar at the top of the console and select "EC2" from the dropdown.
+   - This will take you to the EC2 Dashboard.
+
+3. **Find Your Instance:**
+   - In the left-hand navigation pane, click on "Instances" under the "Instances" section.
+   - Locate your EC2 instance in the list. You can use the instance ID (`i-07bcb004c471666f5`) or public DNS (`ec2-54-165-173-102.compute-1.amazonaws.com`) to identify it.
+
+4. **View Security Groups:**
+   - Select your EC2 instance by clicking on the checkbox next to it.
+   - In the bottom pane, you will see details about your instance. Look for the "Security groups" section.
+   - Click on the security group name to view its details. This will open the security group details in a new tab.
+
+### Adding a Rule for HTTP/Custom TCP
+1. **Click on the "Inbound rules" tab to view the current inbound rules.**
+2. **Click on the "Edit inbound rules" button to modify the rules.**
+3. **Click on "Add Rule".**
+4. **Select "Custom TCP" from the "Type" dropdown.**
+5. **Enter "8080" in the "Port range" field.**
+6. **Select "Anywhere" (0.0.0.0/0) from the "Source" dropdown.**
+7. **Click "Save rules".**
+
+After saving the changes, your EC2 instance should allow inbound traffic on the specified port, and you should be able to access your Spring Boot application using the public DNS and the port number.
